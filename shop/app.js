@@ -12,7 +12,7 @@ db.on('error', console.error);
 db.once('open', function(){
   console.log('mongodb connect');
 });
-mongoose.connect('mongodb://127.0.0.1:27017/fc',{useMongoClient:true});
+mongoose.connect('mongodb://127.0.0.1:27017/fc');
 
 
 // 확장자가 ejs로 끝나는 뷰엔진을 추가한다.
