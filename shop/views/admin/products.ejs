@@ -6,13 +6,17 @@
       <th>작성일</th>
       <th>삭제</th>
     </tr>
+    <% products.forEach( function(product) { %>
     <tr>
-      <td>제품 이름</td>
-      <td>2018-02-22</td>
+      <td><a href="/admin/products/detail/<%=product.id%>"><%=product.name%></td>
+      <td>
+        <%=product.getDate.year%>-<%=product.getDate.month%>-<%=product.getDate.day%>
+      </td>
       <td>
         <a href="#" class="btn btn-danger">삭제</a>
       </td>
     </tr>
+    <% }); %>
   </table>
 
   <a href="/admin/products/write" class="btn btn-default">작성하기</a>

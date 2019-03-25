@@ -1,16 +1,31 @@
 var express = require("express");
-
 var admin = express.Router();
 
+var ProductsModel = require('../models/ProductsModel');
+
 admin.get("/products", function(req, res) {
-  // message란 변수를 템플릿으로 내보낸다.
-  res.render("admin/products", { message: "hello" });
+
+  ProductsModel.find(function(err, products){
+    res.render("admin/products", { products: products });
+  });
+  
 });
 admin.get("/products/write", function(req, res) {
-  res.send("GET /admin/products/write");
+  res.render('admin/form');
 });
+
 admin.post("/products/write", function(req, res) {
-  res.send("POST /admin/products/write");
+  
+  var product = new ProductsModel({
+    name : req.body.name,
+    price : req.body.price,
+    description : req.body.description,
+  });
+
+  product.save(function(err) {
+    res.redirect('/admin/products');
+  });
+
 });
 
 module.exports = admin;
