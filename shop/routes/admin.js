@@ -1,4 +1,8 @@
 var express = require("express");
+
+var csrf = require('csurf');
+var csrfProtection = csrf({cookie : true});
+
 var admin = express.Router();
 
 var ProductsModel = require('../models/ProductsModel');
@@ -46,21 +50,25 @@ admin.post("/products/ajax_comment/delete", function (req, res) {
 });
 
 
-admin.get("/products/write", function(req, res) {
-  res.render('admin/form',{product:""});
+admin.get("/products/write", csrfProtection, function(req, res) {
+  res.render('admin/form',{product:"", csrfToken : req.csrfToken()});
 });
-admin.post("/products/write", function(req, res) {
-  
+admin.post("/products/write", csrfProtection, function(req, res) {
   var product = new ProductsModel({
-    name : req.body.name,
-    price : req.body.price,
-    description : req.body.description,
+    name: req.body.name,
+    price: req.body.price,
+    description: req.body.description
   });
 
-  product.save(function(err) {
-    res.redirect('/admin/products');
-  });
-
+  // 유효성체크
+  var validationError = product.validateSync();
+  if (validationError) {
+    res.send(validationError);
+  } else {
+    product.save(function(err) {
+      res.redirect("/admin/products");
+    });
+  }
 });
 
 
