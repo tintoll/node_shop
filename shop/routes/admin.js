@@ -24,7 +24,7 @@ admin.get("/products/detail/:id", function(req, res) {
   });
 });
 
-admin.get("/products/ajax_comment/insert", function(req, res) {
+admin.post("/products/ajax_comment/insert", function(req, res) {
   var comment = new CommentsModel({
     content: req.body.content,
     prodocut_id: parseInt(req.body.prodocut_id)
@@ -33,7 +33,7 @@ admin.get("/products/ajax_comment/insert", function(req, res) {
   comment.save(function(err, comment) {
     res.json({
       id: comment.id,
-      content: comment.context,
+      content: comment.content,
       message: "success"
     });
   });
