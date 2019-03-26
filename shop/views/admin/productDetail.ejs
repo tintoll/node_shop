@@ -10,19 +10,24 @@
     </div>
     <%= product.description %>
 
-    <!-- 댓글영역  -->
-    <hr />
-    <div id="comment_area">
-      <% comments.forEach(function(comment){ %>
-        <div><%= comment.content %></div>
-      <% }); %>  
-    </div>
+    
   </div>
 </div>
 
 <a href="/admin/products" class="btn btn-default">목록으로</a>
 <a href="/admin/products/edit/<%=product.id%>" class="btn btn-primary">수정</a>
 
+
+<!-- 댓글영역  -->
+<hr />
+<div id="comment_area">
+  <% comments.forEach(function(comment){ %>
+  <div>
+    <%= comment.content %>
+    (<a class="comment_delete" comment_id='<%=comment.id %>' >삭제</a>)
+  </div>
+  <% }); %>
+</div>
 <!-- 댓글영역  -->
 <div>
   댓글작성하기
@@ -46,7 +51,11 @@
           data : $(this).serialize()
         }).done(function(args){
           if(args.message === 'success') {
-            $('#comment_area').append('<div>'+args.content+'</div>');
+            $('#comment_area').append(
+              '<div>'+args.content
+                +"(<a class='comment_delete' comment_id='"+args.id+"' >삭제</a>)" 
+                +'</div>'
+            );
             $('#commentForm textarea[name=content]').val('');
           }
         }).fail(function(args){
@@ -56,6 +65,22 @@
         alert('댓글 내용을 입력해 주세요');
       }
       return false;
+    });
+
+    $(document).on('click', '.comment_delete', function(){
+      if(confirm("삭제하시겠습니까?")) {
+        var $self = $(this);
+        $.ajax({
+          url : '/admin/products/ajax_comment/delete',
+          type : 'POST',
+          data : {comment_id : $self.attr('comment_id')}
+        }).done(function(){
+          $self.parent().remove();
+          alert('삭제가 완료되었습니다.');
+        }).fail(function(args){
+          console.log(args);
+        });
+      }
     });
   });
 })();

@@ -39,6 +39,12 @@ admin.post("/products/ajax_comment/insert", function(req, res) {
   });
 });
 
+admin.post("/products/ajax_comment/delete", function (req, res) {
+  CommentsModel.remove({id : req.body.comment_id}, function(err){
+    res.json({message : 'success'});
+  });
+});
+
 
 admin.get("/products/write", function(req, res) {
   res.render('admin/form',{product:""});
