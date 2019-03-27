@@ -31,3 +31,53 @@ npm install csurf
 // router에서 토큰 일치확인
 if(_csrf !==csrf) error;
 ```
+
+
+
+## 파일업로드 
+
+```shell
+npm install --save multer
+```
+
+### Multer 설정
+
+```javascript
+// multer 설정
+var multer = require('multer');
+var storage = multer.diskStorage({
+  destination : function(req, file, callback) { // 이미지가 저장되는 도착지 지정
+    callback(null, uploadDir);
+  },
+  filename : function(req, file, callback) {
+    callback(null, 'products-'+Date.now()+'.'+file.mimetype.split('/')[1]);
+  }
+});
+var upload = multer({storage : storage});
+```
+
+### Router에 적용 
+
+```javascript
+// thumbnail 명으로 들어오는 파일을 받는다. 
+admin.post("/products/write", upload.single('thumbnail'), csrfProtection, function(req, res) {
+	...
+}
+```
+
+
+
+### 파일삭제
+
+```javascript
+var fs = require('fs');
+// 비동기 방식
+fs.unlink(경로, function(err) => {
+	// 콜백          
+});
+// 동기 방식 
+fs.unlinkSync(경로);
+```
+
+
+

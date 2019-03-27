@@ -7,6 +7,7 @@ var ProductsSchema = new Schema({
     type : String,
     required : [true, '제목은 입력해주세요']
   },
+  thumbnail : String, // 이미지 파일명
   price : Number,
   description : String,
   created_at : {

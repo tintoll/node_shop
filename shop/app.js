@@ -29,6 +29,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// 업로드 path 추가 
+app.use('/uploads', express.static('uploads'));
+
 // 쿠키사용
 app.use(cookieParser());
 
