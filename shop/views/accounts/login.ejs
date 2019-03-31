@@ -22,13 +22,16 @@
         </div>
     </div>
 </div>
+<%if(typeof flashMessage !== 'undefined'){ %>
+    <div class="alert alert-danger" role="alert"><%=flashMessage%></div>
+<%}%>
 <script type="text/javascript">
 (function(){
     $(document).ready(function() {
         $('#login_form').submit(function(){
             var $usernameInput = $('#login_form input[name=username]');
             var $passwordInput = $('#login_form input[name=password]');
- 
+
             if(!$usernameInput.val()){
                 alert("아이디를 입력해주세요.");
                 $usernameInput.focus();

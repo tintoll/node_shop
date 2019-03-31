@@ -4,6 +4,12 @@ var logger = require("morgan");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 
+// flash 메시지 관련
+var flash = require("connect-flash");
+// passport 로그인관련
+var passport = require("passport");
+var session = require("express-session");
+
 var admin = require("./routes/admin");
 var accounts = require("./routes/accounts");
 
@@ -33,6 +39,25 @@ app.use("/uploads", express.static("uploads"));
 
 // 쿠키사용
 app.use(cookieParser());
+
+// session 셋팅
+app.use(
+  session({
+    secret: "mysecret", // 쿠키임의 변조 방비
+    resave: false,
+    saveUninitialized: true, // 세션에 저장되기전에 uninitialized가 됨.
+    cookie: {
+      maxAge: 2000 * 60 * 60 // 지속시간 2시간
+    }
+  })
+);
+
+// passport 적용
+app.use(passport.initialize());
+app.use(passport.session());
+
+// flash 메시지
+app.use(flash());
 
 app.get("/", function(req, res) {
   res.send("first app");
