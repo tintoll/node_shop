@@ -12,6 +12,7 @@ var session = require("express-session");
 
 var admin = require("./routes/admin");
 var accounts = require("./routes/accounts");
+var auth = require("./routes/auth");
 
 var app = express();
 var port = 3000;
@@ -65,6 +66,7 @@ app.get("/", function(req, res) {
 
 app.use("/admin", admin);
 app.use("/accounts", accounts);
+app.use("/auth", auth);
 
 app.listen(port, function() {
   console.log("Express listening on port ", port);
