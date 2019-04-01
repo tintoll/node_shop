@@ -72,7 +72,7 @@ accounts.post(
   }),
   function(req, res) {
     res.send(
-      '<script>alert("로그인성공");location.href="/accounts/success";</script>'
+      '<script>alert("로그인성공");location.href="/";</script>'
     );
   }
 );

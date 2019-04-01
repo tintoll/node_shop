@@ -60,6 +60,15 @@ app.use(passport.session());
 // flash 메시지
 app.use(flash());
 
+// 로그인 정보 뷰에서만 변수로 셋팅, 전체 미들웨어 router위에 두어야됨.
+app.use(function(req, res, next){
+  app.locals.isLogin = req.isAuthenticated();
+  // app.locals.urlparameter = req.url; // 현재 url 정보를 보내고 싶으면 설정
+  // app.locals.userData = req.user; // 사용자 정보를 보내고 싶은면 설정
+  next();
+});
+
+
 app.get("/", function(req, res) {
   res.send("first app");
 });
