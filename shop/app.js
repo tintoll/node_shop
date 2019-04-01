@@ -10,6 +10,7 @@ var flash = require("connect-flash");
 var passport = require("passport");
 var session = require("express-session");
 
+var home = require('./routes/home');
 var admin = require("./routes/admin");
 var accounts = require("./routes/accounts");
 var auth = require("./routes/auth");
@@ -69,13 +70,13 @@ app.use(function(req, res, next){
 });
 
 
-app.get("/", function(req, res) {
-  res.send("first app");
-});
 
+// Routers 
+app.use('/', home);
 app.use("/admin", admin);
 app.use("/accounts", accounts);
 app.use("/auth", auth);
+
 
 app.listen(port, function() {
   console.log("Express listening on port ", port);

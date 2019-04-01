@@ -14,8 +14,8 @@ passport.deserializeUser(function(user, done) {
 passport.use(
   new FacebookStrategy(
     {
-      clientID: "",
-      clientSecret: "",
+      clientID: "222",
+      clientSecret: "111",
       callbackURL: "http://localhost:3000/auth/facebook/callback",
       profileFields: ["id", "displayName", "photos", "email"] // 받고 싶은 필드 나열
     },

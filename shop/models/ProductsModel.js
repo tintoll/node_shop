@@ -13,7 +13,8 @@ var ProductsSchema = new Schema({
   created_at : {
     type : Date,
     default : Date.now()
-  }
+  },
+  username : String // 작성자 
 });
 // 1식 증가하는 primary key를 만든다.
 // model : 생성할 document 이름

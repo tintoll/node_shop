@@ -19,6 +19,9 @@
     <% }); %>
   </table>
 
+  <%if(isLogin){%>
   <a href="/admin/products/write" class="btn btn-default">작성하기</a>
-
+  <%}else{%>
+  <a href="/accounts/login" class="btn btn-primary">로그인하기</a>
+  <%}%>
 <% include ../footer.ejs %>

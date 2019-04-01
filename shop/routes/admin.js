@@ -5,6 +5,8 @@ var csrfProtection = csrf({cookie : true});
 
 var admin = express.Router();
 
+var loginRequired = require("../lib/loginRequired");
+
 var ProductsModel = require('../models/ProductsModel');
 var CommentsModel = require('../models/CommentsModel');
 
@@ -66,15 +68,17 @@ admin.post("/products/ajax_comment/delete", function (req, res) {
 });
 
 
-admin.get("/products/write", csrfProtection, function(req, res) {
-  res.render('admin/form',{product:"", csrfToken : req.csrfToken()});
+admin.get("/products/write", loginRequired, csrfProtection, function(req, res) {
+  res.render("admin/form", { product: "", csrfToken: req.csrfToken() });
 });
-admin.post("/products/write", upload.single('thumbnail'), csrfProtection, function(req, res) {
+admin.post("/products/write", loginRequired, upload.single('thumbnail'), csrfProtection, function(req, res) {
+  console.log(req.file);
   var product = new ProductsModel({
     name: req.body.name,
-    thumbnail : (req.file) ? req.file.fieldname : "",
+    thumbnail : (req.file) ? req.file.filename : "",
     price: req.body.price,
-    description: req.body.description
+    description: req.body.description,
+    username : req.user.username
   });
 
   // 유효성체크
@@ -90,12 +94,12 @@ admin.post("/products/write", upload.single('thumbnail'), csrfProtection, functi
 
 
 
-admin.get("/products/edit/:id", csrfProtection,function (req, res) {
+admin.get("/products/edit/:id", loginRequired, csrfProtection,function (req, res) {
   ProductsModel.findOne({ 'id': req.params.id }, function (err, product) {
     res.render('admin/form', { product: product, csrfToken: req.csrfToken() });
   });
 });
-admin.post("/products/edit/:id", upload.single('thumbnail'),function (req, res) {
+admin.post("/products/edit/:id", loginRequired, upload.single('thumbnail'),function (req, res) {
   
   // DB에 저장되 있는 파일명을 받아온다.
   ProductsModel.findOne({id:req.params.id}, function(err, product){
