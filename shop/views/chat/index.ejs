@@ -63,7 +63,7 @@
     });
 
     socket.on('server message', function(data){
-      $('#chatBody').append('<li><strong>'+data.displayName+'</strong> : '+data.message+'</li>');
+      $('#chatBody').append('<li><strong>'+data.displayname+'</strong> : '+data.message+'</li>');
     });
 
     $(document).ready(function(){

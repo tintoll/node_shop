@@ -8,20 +8,22 @@ module.exports = function(io) {
     var session = socket.request.session.passport;
     var user = typeof session !== "undefined" ? session.user : "";
 
-    if (userList.indexOf(user.displayName) === -1) {
-      userList.push(user.displayName);
+    console.log(`user : ${user.displayname}`);
+
+    if (userList.indexOf(user.displayname) === -1) {
+      userList.push(user.displayname);
     }
     io.emit("join", userList);
 
     socket.on("client message", function(data) {
       io.emit("server message", {
         message: data.message,
-        displayName: user.displayName
+        displayname: user.displayname
       });
     });
 
     socket.on("disconnect", function() {
-      userList.removeByValue(user.displayName);
+      userList.removeByValue(user.displayname);
       io.emit("leave", userList);
     });
   });
