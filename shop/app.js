@@ -10,10 +10,11 @@ var flash = require("connect-flash");
 var passport = require("passport");
 var session = require("express-session");
 
-var home = require('./routes/home');
+var home = require("./routes/home");
 var admin = require("./routes/admin");
 var accounts = require("./routes/accounts");
 var auth = require("./routes/auth");
+var chat = require("./routes/chat");
 
 var app = express();
 var port = 3000;
@@ -43,16 +44,22 @@ app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());
 
 // session 셋팅
-app.use(
-  session({
-    secret: "mysecret", // 쿠키임의 변조 방비
-    resave: false,
-    saveUninitialized: true, // 세션에 저장되기전에 uninitialized가 됨.
-    cookie: {
-      maxAge: 2000 * 60 * 60 // 지속시간 2시간
-    }
+var connectMongo = require("connect-mongo");
+var MongoStore = connectMongo(session);
+var sessionMiddleware = session({
+  secret: "mysecret", // 쿠키임의 변조 방비
+  resave: false,
+  saveUninitialized: true, // 세션에 저장되기전에 uninitialized가 됨.
+  cookie: {
+    maxAge: 2000 * 60 * 60 // 지속시간 2시간
+  },
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 14 * 24 * 60 * 60
   })
-);
+});
+
+app.use(sessionMiddleware);
 
 // passport 적용
 app.use(passport.initialize());
@@ -62,22 +69,30 @@ app.use(passport.session());
 app.use(flash());
 
 // 로그인 정보 뷰에서만 변수로 셋팅, 전체 미들웨어 router위에 두어야됨.
-app.use(function(req, res, next){
+app.use(function(req, res, next) {
   app.locals.isLogin = req.isAuthenticated();
   // app.locals.urlparameter = req.url; // 현재 url 정보를 보내고 싶으면 설정
   // app.locals.userData = req.user; // 사용자 정보를 보내고 싶은면 설정
   next();
 });
 
-
-
-// Routers 
-app.use('/', home);
+// Routers
+app.use("/", home);
 app.use("/admin", admin);
 app.use("/accounts", accounts);
 app.use("/auth", auth);
+app.use("/chat", chat);
 
-
-app.listen(port, function() {
+var server = app.listen(port, function() {
   console.log("Express listening on port ", port);
 });
+
+// socket.io 설정
+var listen = require("socket.io");
+var io = listen(server);
+// passport 접근하기 위한 미들웨어 적용
+io.use(function(socket, next) {
+  sessionMiddleware(socket.request, socket.request.res, next);
+});
+
+require("./lib/socketConnection")(io);
