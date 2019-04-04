@@ -4,6 +4,7 @@ var csrf = require("csurf");
 var csrfProtection = csrf({ cookie: true });
 
 var co = require("co");
+var paginate = require("express-paginate");
 
 var admin = express.Router();
 
@@ -33,9 +34,24 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage });
 
-admin.get("/products", function(req, res) {
-  ProductsModel.find(function(err, products) {
-    res.render("admin/products", { products: products });
+admin.get("/products", paginate.middleware(3, 50), async function(req, res) {
+  const [results, itemCount] = await Promise.all([
+    ProductsModel.find()
+      .sort("-created_at")
+      .limit(req.query.limit)
+      .skip(req.skip)
+      .exec(),
+    ProductsModel.count({})
+  ]);
+
+  const pageCount = Math.ceil(itemCount / req.query.limit);
+
+  const pages = paginate.getArrayPages(req)(4, pageCount, req.query.page);
+
+  res.render("admin/products", {
+    products: results,
+    pages: pages,
+    pageCount: pageCount
   });
 });
 
