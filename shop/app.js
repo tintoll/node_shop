@@ -17,6 +17,7 @@ var auth = require("./routes/auth");
 var chat = require("./routes/chat");
 var products = require("./routes/products");
 var cart = require('./routes/cart');
+var checkout = require('./routes/checkout');
 
 var app = express();
 var port = 3000;
@@ -87,6 +88,7 @@ app.use("/auth", auth);
 app.use("/chat", chat);
 app.use("/products", products);
 app.use("/cart", cart);
+app.use("/checkout", checkout);
 
 var server = app.listen(port, function() {
   console.log("Express listening on port ", port);
