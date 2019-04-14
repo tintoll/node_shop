@@ -21,6 +21,7 @@
     "express": "^4.16.4",
     "express-paginate": "^1.0.0",
     "express-session": "^1.15.6",
+    "iamporter": "^1.4.2",
     "mongodb": "^3.2.2",
     "mongoose": "^5.4.19",
     "mongoose-plugin-autoinc": "^1.1.9",
