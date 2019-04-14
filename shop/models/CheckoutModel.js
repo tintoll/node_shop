@@ -27,4 +27,13 @@ CheckoutSchema.plugin(autoIncrement, {
   fiedl: "id",
   startAt: 1
 });
+
+CheckoutSchema.virtual("getDate").get(function() {
+  var date = new Date(this.create_at);
+  return {
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate()
+  };
+});
 module.exports = mongoose.model("checkout", CheckoutSchema);

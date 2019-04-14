@@ -12,6 +12,7 @@ var loginRequired = require("../lib/loginRequired");
 
 var ProductsModel = require("../models/ProductsModel");
 var CommentsModel = require("../models/CommentsModel");
+var CheckoutModel = require("../models/CheckoutModel");
 
 // 이미지 저장되는 위치 설정
 var path = require("path");
@@ -206,5 +207,17 @@ admin.post(
     res.send("/uploads/" + req.file.filename);
   }
 );
+
+admin.get("/order", (req, res) => {
+  CheckoutModel.find((err, orderList) => {
+    res.render("admin/orderList", { orderList });
+  });
+});
+
+admin.get("/order/edit/:id", (req, res) => {
+  CheckoutModel.findOne({ id: req.params.id }, function(err, order) {
+    res.render("admin/orderForm", { order: order });
+  });
+});
 
 module.exports = admin;
