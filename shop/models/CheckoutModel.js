@@ -36,4 +36,9 @@ CheckoutSchema.virtual("getDate").get(function() {
     day: date.getDate()
   };
 });
+
+CheckoutSchema.virtual("getAmountFormat").get(function() {
+  // 1000 -> 1,000
+  return new Intl.NumberFormat().format(this.paid_amount);
+});
 module.exports = mongoose.model("checkout", CheckoutSchema);
