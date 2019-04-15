@@ -94,4 +94,14 @@ checkoutRouter.post("/mobile_complete", (req, res) => {
 checkoutRouter.get("/success", (req, res) => {
   res.render("checkout/success");
 });
+
+
+checkoutRouter.get('/nomember', (req, res) => {
+  res.render('checkout/nomember');
+});
+checkoutRouter.get('/nomember/search', (req, res) => {
+  CheckoutModel.find({buyer_email : req.query.email}, function(err, checkoutList) {
+    res.render('checkout/search', {checkoutList : checkoutList});
+  });
+})
 module.exports = checkoutRouter;
