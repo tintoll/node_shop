@@ -9,6 +9,7 @@ var paginate = require("express-paginate");
 var admin = express.Router();
 
 var loginRequired = require("../lib/loginRequired");
+var adminRequired = require("../lib/adminRequired");
 
 var ProductsModel = require("../models/ProductsModel");
 var CommentsModel = require("../models/CommentsModel");
@@ -123,7 +124,7 @@ admin.post("/products/ajax_comment/delete", function(req, res) {
   });
 });
 
-admin.get("/products/write", loginRequired, csrfProtection, function(req, res) {
+admin.get("/products/write", adminRequired, csrfProtection, function(req, res) {
   res.render("admin/form", { product: "", csrfToken: req.csrfToken() });
 });
 admin.post(
@@ -153,7 +154,7 @@ admin.post(
   }
 );
 
-admin.get("/products/edit/:id", loginRequired, csrfProtection, function(
+admin.get("/products/edit/:id", adminRequired, csrfProtection, function(
   req,
   res
 ) {
@@ -201,7 +202,7 @@ admin.get("/products/delete/:id", function(req, res) {
 
 admin.post(
   "/products/ajax_summernote",
-  loginRequired,
+  adminRequired,
   upload.single("thumbnail"),
   function(req, res) {
     res.send("/uploads/" + req.file.filename);
