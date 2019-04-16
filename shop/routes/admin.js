@@ -221,32 +221,47 @@ admin.get("/order/edit/:id", (req, res) => {
   });
 });
 
-admin.get("/statistics", adminRequired, (req, res) => {
-  CheckoutModel.find(function(err, orderList) {
-    var barData = [];
-    var pieData = [];
+admin.get("/statistics", adminRequired, async (req, res) => {
+  // 년-월-일 을 키값으로 몇명이 결재했는지 확인
 
-    orderList.forEach(function(order) {
-      var date = new Date(order.create_at);
-      var monthDay = date.getMonth() + 1 + "-" + date.getDate();
-
-      // 날짜에 해당하는 키값으로 조회
-      if (monthDay in barData) {
-        barData[monthDay]++; // 있으면 더한다.
-      } else {
-        barData[monthDay] = 1; // 없으면 초기값 1
+  var barData = [];
+  var cursor = CheckoutModel.aggregate([
+    { $sort: { create_at: -1 } },
+    {
+      $group: {
+        _id: {
+          year: { $year: "$create_at" },
+          month: { $month: "$create_at" },
+          day: { $dayOfMonth: "$create_at" }
+        },
+        count: { $sum: 1 }
       }
+    }
+  ])
+    .cursor({ batchSize: 1000 })
+    .exec();
 
-      // 결재 상태를 검색해서 조회
-      if (order.status in pieData) {
-        pieData[order.status] = pieData[order.status] + 1;
-      } else {
-        pieData[order.status] = 1;
-      }
-    });
-
-    res.render("admin/statistics", { barData, pieData });
+  await cursor.eachAsync(function(doc) {
+    if (doc !== null) {
+      barData.push(doc);
+    }
   });
+
+  var pieData = [];
+  // 배송중, 배송완료, 결제완료자 수로 묶는다
+  var cursor = CheckoutModel.aggregate([
+    { $group: { _id: "$status", count: { $sum: 1 } } }
+  ])
+    .cursor({ batchSize: 1000 })
+    .exec();
+
+  await cursor.eachAsync(function(doc) {
+    if (doc !== null) {
+      pieData.push(doc);
+    }
+  });
+
+  res.render("admin/statistics", { barData, pieData });
 });
 
 module.exports = admin;

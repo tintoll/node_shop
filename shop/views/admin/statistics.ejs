@@ -28,15 +28,11 @@ function drawbar() {
     ['날짜', '결제자수', { role: 'annotation' } ],
     
     //그다음부터 데이터
-    //그다음부터 데이터
-    <% for( key in barData ){
-        if(typeof barData[key] === 'number'){
-      %>
-        ["<%=key%>", <%=barData[key]%> , "(<%=barData[key]%>)"],
-    <%
-          }
-        }
-    %>
+     <% barData.forEach(function(value){ %>
+        ["<%=value._id.year%>-<%=value._id.month%>-<%=value._id.day%>"
+         , <%=value.count%> 
+         , "(<%=value.count%>)"],
+    <% }) %>
 
   ]);
 
@@ -58,14 +54,9 @@ google.charts.setOnLoadCallback(drawpie);
 function drawpie() {
   var data = google.visualization.arrayToDataTable([
     ['Task', 'Hours per Day'],
-    <% for( key in pieData ){
-        if(typeof pieData[key] === 'number'){
-      %>
-        ['<%=key%>',  <%=pieData[key]%>],
-    <%
-          }
-        }
-    %>
+    <% pieData.forEach(function(value){ %>
+        ['<%=value._id%>',  <%=value.count%>],
+    <% }) %>
   ]);
 
 var options = {
