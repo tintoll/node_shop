@@ -221,4 +221,32 @@ admin.get("/order/edit/:id", (req, res) => {
   });
 });
 
+admin.get("/statistics", adminRequired, (req, res) => {
+  CheckoutModel.find(function(err, orderList) {
+    var barData = [];
+    var pieData = [];
+
+    orderList.forEach(function(order) {
+      var date = new Date(order.create_at);
+      var monthDay = date.getMonth() + 1 + "-" + date.getDate();
+
+      // 날짜에 해당하는 키값으로 조회
+      if (monthDay in barData) {
+        barData[monthDay]++; // 있으면 더한다.
+      } else {
+        barData[monthDay] = 1; // 없으면 초기값 1
+      }
+
+      // 결재 상태를 검색해서 조회
+      if (order.status in pieData) {
+        pieData[order.status] = pieData[order.status] + 1;
+      } else {
+        pieData[order.status] = 1;
+      }
+    });
+
+    res.render("admin/statistics", { barData, pieData });
+  });
+});
+
 module.exports = admin;
