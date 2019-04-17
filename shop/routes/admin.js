@@ -215,10 +215,25 @@ admin.get("/order", (req, res) => {
   });
 });
 
-admin.get("/order/edit/:id", (req, res) => {
-  CheckoutModel.findOne({ id: req.params.id }, function(err, order) {
+admin.get("/order/edit/:id", adminRequired, (req, res) => {
+  console.log('dddd');
+  CheckoutModel.findOne({ _id: req.params.id }, function(err, order) {
+
+    console.log(order);
     res.render("admin/orderForm", { order: order });
   });
+});
+
+admin.post("/order/edit/:id", adminRequired, (req, res) => {
+  var query = {
+    status : req.body.status,
+    song_jang : req.body.song_jang
+  }
+
+  CheckoutModel.update({_id : req.params.id}, {$set : query} , function(err) {
+    res.redirect('/admin/order');
+  });
+
 });
 
 admin.get("/statistics", adminRequired, async (req, res) => {
